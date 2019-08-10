@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 26
+        versionCode 10000
+        versionName "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.core:core:1.0.2'
+}
+
+def outputJarDir = 'build/outputs/jar'
+
+task clearJar(type: Delete) {
+    delete outputJarDir
+}
+
+task makeJar(type: Copy) {
+    mkdir outputJarDir
+    //from('build/intermediates/bundles/release/')
+    from('build/intermediates/packaged-classes/release/')
+    into(outputJarDir)
+    include('classes.jar')
+    rename('classes.jar', JAR_NAME)
+}
+
+makeJar.dependsOn(clearJar, build)
